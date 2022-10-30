@@ -29,7 +29,7 @@ O projeto em questão é um dos desafios de codificação para a vaga de estági
 
 
 <p align="center">
-  <img alt="Interface" src="https://github.com/gustavofbc/word-inverter/blob/main/src/assets/destinations-of-interest-interface.png"/>
+  <img alt="Interface" src="https://github.com/gustavofbc/destinations-of-interest/blob/main/src/assets/destinations-of-interest-interface.png"/>
 </p>
 
 
