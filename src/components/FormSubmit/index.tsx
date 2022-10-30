@@ -1,14 +1,19 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, SetStateAction, useEffect, useState } from "react";
 import { Container, Form, FormContainer, FormContent, SubmitButton } from "./styles";
 import Select from 'react-select';
 import { Input } from "../Input";
 import * as yup from 'yup';
 
+type OptionType = {
+    value: string;
+    label: string;
+};
+
 export function FormSubmit() {
-    const [countries, setCountries] = useState([]);
+    const [countries, setCountries] = useState<Array<{ value: string, label: string }>>([]);
     const [selectedCountries, setSelectedCountries] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [selectedCities, setSelectedCities] = useState([]);
+    const [cities, setCities] = useState<Array<{ value: string, label: string }>>([]);
+    const [selectedCities, setSelectedCities] = useState<Array<{ value: string, label: string }>>([]);
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -29,14 +34,14 @@ export function FormSubmit() {
     async function Notify(event: FormEvent) {
         event.preventDefault();
 
-        let listCountries = [];
-        await selectedCountries.map(countries => {
+        let listCountries: string[] = [];
+        await selectedCountries.map((countries: { value: string }) => {
             return listCountries.push(countries.value);
         })
 
-        let listCities = [];
+        let listCities: string[] = [];
 
-        await selectedCities.map(city => {
+        await selectedCities.map((city: { value: string }) => {
             return listCities.push(city.value);
         })
 
@@ -99,14 +104,14 @@ export function FormSubmit() {
     }
 
     function handleCpfChange(event: string) {
-        let formatCpf = event.replace(/\D/g, '')
-        setCpf(formatCpf)
+        let formatCpf = String(event.replace(/\D/g, ''))
+        return setCpf(formatCpf)
     }
 
-    function handleSelectedCountriesChange(selectedOption) {
+    function handleSelectedCountriesChange(selectedOption: any) {
         setSelectedCountries(selectedOption)
     }
-    function handleSelectedCitiesChange(selectedOption) {
+    function handleSelectedCitiesChange(selectedOption: any) {
         setSelectedCities(selectedOption)
     }
 
@@ -148,8 +153,8 @@ export function FormSubmit() {
                             name="cpf"
                             type="text"
                             value={cpf}
-                            minLength="11"
-                            maxLength="11"
+                            minLength={11}
+                            maxLength={11}
                             onChange={(event) => handleCpfChange(event.target.value)}
                         />
                     </FormContent>
