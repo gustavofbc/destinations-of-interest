@@ -1,28 +1,68 @@
-import { FormEvent, SetStateAction, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Container, Form, FormContainer, FormContent, SubmitButton } from "./styles";
 import Select from 'react-select';
 import { Input } from "../Input";
+import * as yup from 'yup';
 
 export function FormSubmit() {
     const [countries, setCountries] = useState([]);
     const [selectedCountries, setSelectedCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [selectedCities, setSelectedCities] = useState([]);
+    const [nome, setNome] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [cpf, setCpf] = useState('');
 
-    function Notify(event: FormEvent) {
-        event.preventDefault()
 
-        let listCountries = selectedCountries.map(countries => {
-            return countries.value;
+    const dateSchema = yup.object().shape({
+        nome: yup.string().required(),
+        email: yup.string().email().required(),
+        phone: yup.number().required(),
+        cpf: yup.string().min(11).max(11).required(),
+        // countries: yup.number().test(((value) => value != 0)).required()
+        //     yup.number().required()
+        // ,
+        // cities: yup.number().required()
+    });
+
+    async function Notify(event: FormEvent) {
+        event.preventDefault();
+
+        let listCountries = [];
+        await selectedCountries.map(countries => {
+            return listCountries.push(countries.value);
         })
 
-        let listCities = selectedCities.map(city => {
-            return city.value;
+        let listCities = [];
+
+        await selectedCities.map(city => {
+            return listCities.push(city.value);
         })
-        alert(`Dados enviados com sucesso!
-                Países selecionados: ${listCountries}
-                Cidades selecionadas: ${listCities}`
-        )
+
+        dateSchema.isValid(
+            {
+                nome,
+                email,
+                phone,
+                cpf,
+            }
+        ).then(valid => {
+            if (valid != true || listCities.length === 0 || listCountries.length === 0) {
+                alert(`Por favor preencha todos os campos.`)
+            } else {
+                alert(`Dados enviados com sucesso!
+                            Nome: ${nome}
+                            E-mail: ${email}
+                            Telefone: ${phone}
+                            CPF: ${cpf}
+                            Países selecionados: ${listCountries}
+                            Cidades selecionadas: ${listCities}`
+                )
+            }
+        });
+
+
 
     }
 
@@ -58,6 +98,11 @@ export function FormSubmit() {
         return setCities(aux);
     }
 
+    function handleCpfChange(event: string) {
+        let formatCpf = event.replace(/\D/g, '')
+        setCpf(formatCpf)
+    }
+
     function handleSelectedCountriesChange(selectedOption) {
         setSelectedCountries(selectedOption)
     }
@@ -79,22 +124,33 @@ export function FormSubmit() {
                         <Input
                             label="Nome"
                             name="name"
+                            value={nome}
+                            onChange={(event) => setNome(event.target.value)}
                         />
                         <Input
                             label="Email"
                             name="email"
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
                         />
 
                         <Input
                             label="Telefone"
                             name="phone"
                             type="number"
+                            value={phone}
+                            min={11}
+                            onChange={(event) => setPhone(event.target.value)}
                         />
 
                         <Input
                             label="CPF"
                             name="cpf"
-                            type="number"
+                            type="text"
+                            value={cpf}
+                            minLength="11"
+                            maxLength="11"
+                            onChange={(event) => handleCpfChange(event.target.value)}
                         />
                     </FormContent>
 
@@ -107,6 +163,7 @@ export function FormSubmit() {
                             options={countries}
                             onChange={handleSelectedCountriesChange}
                         />
+
                         <Select
                             placeholder="Selecione a(s) cidade(s)"
                             className="select"
